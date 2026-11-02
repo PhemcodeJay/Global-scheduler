@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Gonest International</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="dashboard-nav">
+    <div class="nav-brand">
+      <div class="logo-icon-small">🌐</div>
+      <span class="brand-name">Gonest International</span>
+    </div>
+    <div class="nav-user">
+      <span class="user-name" id="userName">Loading...</span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Admin Badge -->
+  <div class="admin-notification" id="adminBadge" style="display:none">
+    <a href="/admin.html" class="admin-link">⚙️ Admin Panel</a>
+  </div>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+      <h1>Welcome back, <span id="welcomeName">User</span>!</h1>
+      <p>Manage your appointments and book new slots</p>
+    </section>
+
+    <!-- Auto-Book Toggle Section -->
+    <section class="auto-book-section">
+      <div class="auto-book-card">
+        <h3>🤖 Auto-Book Monitor</h3>
+        <p class="auto-book-desc">Enable to automatically book slots as soon as they become available</p>
+        
+        <div class="toggle-container">
+          <label class="toggle-switch">
+            <input type="checkbox" id="autoBookToggle">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label" id="toggleStatus">Disabled</span>
+        </div>
+        
+        <!-- Per-client booking rules -->
+        <div class="pref-section" id="prefSection">
+          <div class="pref-group">
+            <span class="pref-label">Preferred services <small>(none selected = all)</small>:</span>
+            <div class="pref-options" id="servicePrefs">
+              <small style="color:#999">Loading...</small>
+            </div>
+          </div>
+          <div class="pref-group">
+            <span class="pref-label">Preferred times <small>(none selected = any)</small>:</span>
+            <div class="pref-options" id="timePrefs">
+              <label class="checkbox-label"><input type="checkbox" value="morning"> 🌅 Morning (6–12)</label>
+              <label class="checkbox-label"><input type="checkbox" value="afternoon"> ☀️ Afternoon (12–18)</label>
+              <label class="checkbox-label"><input type="checkbox" value="evening"> 🌙 Evening (18–6)</label>
+            </div>
+            <label class="exact-time-label" for="exactTimePref">Exact start time (optional)</label>
+            <input class="exact-time-input" id="exactTimePref" type="time" aria-label="Exact preferred start time">
+          </div>
+          <button class="btn btn-secondary" id="savePrefsBtn" onclick="saveAutoBookPrefs()">💾 Save Preferences</button>
+          <span id="prefSaved" class="pref-saved"></span>
+        </div>
+        
+        <div class="monitor-status" id="monitorStatus" style="display:none">
+          <div class="status-indicator active"></div>
+          <span id="statusText">Monitoring for slots...</span>
+        </div>
+        
+        <div class="last-booking" id="lastBooking" style="display:none">
+          <p>Last auto-booking: <span id="lastBookingTime">-</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slots Section -->
+    <section class="slots-section">
+      <div class="section-header">
+        <h2>Available Slots</h2>
+        <div class="filter-group">
+          <select id="serviceFilter" class="filter-select">
+            <option value="">All Services</option>
+          </select>
+          <input type="date" id="dateFilter" class="filter-date">
+          <button class="btn btn-secondary" id="filterSlotsBtn" onclick="loadSlots()">🔍 Filter</button>
+        </div>
+      </div>
+      
+      <div class="slots-grid" id="slotsContainer">
+        <div class="loading-slots">Loading slots...</div>
+      </div>
+      
+      <div class="no-slots" id="noSlots" style="display:none">
+        <p>No slots available at the moment. Enable auto-book to get notified when slots open!</p>
+      </div>
+    </section>
+
+    <!-- Quick Book Modal -->
+    <div class="modal-overlay" id="bookingModal" style="display:none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Book Appointment</h3>
+          <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="slot-info" id="modalSlotInfo">
+            <!-- Slot info populated dynamically -->
+          </div>
+          
+          <form id="bookingForm" onsubmit="event.preventDefault(); submitBooking();">
+            <input type="hidden" id="bookingSlotId">
+            
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="bookingName" required placeholder="Enter full name as in passport">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Date of Birth *</label>
+                <input type="date" id="bookingDob" required>
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <select id="bookingGender">
+                  <option value="">Select (optional)</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                  <option value="prefer_not_to_say">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Passport Number *</label>
+                <input type="text" id="bookingPassport" class="passport-input" required placeholder="e.g. A1234567" maxlength="20">
+              </div>
+              <div class="form-group">
+                <label>Passport Expiry (optional)</label>
+                <input type="date" id="bookingPassportExpiry">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Nationality *</label>
+              <input type="text" id="bookingNationality" required placeholder="e.g. Nigerian">
+            </div>
+            
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" id="bookingEmail" required placeholder="Enter your email">
+            </div>
+            
+            <div class="form-group">
+              <label>Phone Number (optional)</label>
+              <input type="tel" id="bookingPhone" placeholder="Enter phone number">
+            </div>
+            
+            <div class="form-group">
+              <label>Additional Notes (optional)</label>
+              <textarea id="bookingNotes" rows="3" placeholder="Any special requests or notes..."></textarea>
+            </div>
+            
+            <div id="bookingError" class="error-message" style="display:none"></div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+          <button class="btn btn-primary" id="confirmBookingBtn" onclick="submitBooking()">Confirm Booking</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Success Modal (like admin) -->
+    <div class="modal-overlay" id="successModal" style="display:none">
+      <div class="modal-content" style="max-width:380px;text-align:center">
+        <div class="modal-body">
+          <div style="font-size:48px">✅</div>
+          <h3 id="successTitle" style="margin:10px 0;color:#1a1a2e">Booking Confirmed!</h3>
+          <div id="successMsg" style="color:#666"></div>
+        </div>
+        <div class="modal-footer" style="justify-content:center">
+          <button class="btn btn-primary" style="width:auto" onclick="closeSuccessModal()">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Appointments Section -->
+    <section class="appointments-section">
+      <div class="section-header">
+        <h2>My Appointments</h2>
+        <span class="appointment-count" id="appointmentCount">0 appointments</span>
+      </div>
+      
+      <div class="appointments-list" id="appointmentsContainer">
+        <div class="loading-appointments">Loading appointments...</div>
+      </div>
+      
+      <div class="no-appointments" id="noAppointments" style="display:none">
+        <p>You haven't booked any appointments yet. Browse available slots above!</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/slots.js"></script>
+  <script src="/js/appointments.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

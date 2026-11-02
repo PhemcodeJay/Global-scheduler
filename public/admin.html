@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Gonest International</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <!-- Navigation -->
+  <nav class="admin-nav">
+    <div class="nav-brand">
+      <div class="logo-icon-small"></div>
+      <span class="brand-name">Gonest International</span>
+      <span class="admin-badge">Admin Panel</span>
+    </div>
+    <div class="nav-user">
+      <span class="user-name" id="adminUserName">Admin</span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+  <!-- Stats Overview -->
+  <div class="admin-stats">
+    <div class="admin-stat-card">
+      <div class="stat-icon users"></div>
+      <div class="stat-value" id="statUsers">-</div>
+      <div class="stat-label">Total Users</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="stat-icon slots"></div>
+      <div class="stat-value" id="statSlots">-</div>
+      <div class="stat-label">Total Slots</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="stat-icon available"></div>
+      <div class="stat-value" id="statAvailable">-</div>
+      <div class="stat-label">Available</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="stat-icon booked"></div>
+      <div class="stat-value" id="statAppointments">-</div>
+      <div class="stat-label">Bookings</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="stat-icon today"></div>
+      <div class="stat-value" id="statToday">-</div>
+      <div class="stat-label">Today's Bookings</div>
+    </div>
+  </div>
+  <!-- Tabs -->
+  <div class="admin-tab-container">
+    <button class="admin-tab active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="admin-tab" data-tab="slots" onclick="showTab('slots')">Manage Slots</button>
+    <button class="admin-tab" data-tab="appointments" onclick="showTab('appointments')">Manage Bookings</button>
+    <button class="admin-tab" data-tab="users" onclick="showTab('users')">Users</button>
+    <button class="admin-tab" data-tab="autobook" onclick="showTab('autobook')">Auto-Book</button>
+  </div>
+  <!-- Dashboard Tab -->
+  <div class="tab-content" id="tab-dashboard" style="display:block">
+    <div class="admin-section">
+      <div class="card-header"><h3>System Overview</h3></div>
+      <div class="card-body">
+        <div class="dashboard-grid">
+          <div class="overview-card">
+            <h4>Recent Activity</h4>
+            <div id="recentActivity"><div class="loading-text">Loading...</div></div>
+          </div>
+          <div class="overview-card">
+            <h4>Quick Actions</h4>
+            <div class="quick-actions">
+              <button class="btn-action btn-book" style="padding:10px 16px" onclick="showTab('slots'); setTimeout(openAddSlotModal, 50);">Add New Slot</button>
+              <button class="btn-action btn-cancel" style="padding:10px 16px" onclick="showTab('appointments')">View All Bookings</button>
+              <button class="btn-action btn-edit" style="padding:10px 16px" onclick="showTab('users')">Manage Users</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Slots Tab -->
+  <div class="tab-content" id="tab-slots" style="display:none">
+    <div class="admin-section">
+      <div class="card-header">
+        <h3>Manage Time Slots</h3>
+        <button class="btn-action btn-book" style="padding:8px 16px" onclick="openAddSlotModal()">Add New Slot</button>
+      </div>
+      <div class="card-body">
+        <div class="filter-bar">
+          <select id="slotStatusFilter" class="filter-select" onchange="loadAdminSlots()">
+            <option value="">All Status</option>
+            <option value="available">Available</option>
+            <option value="booked">Booked</option>
+          </select>
+          <input type="date" id="slotDateFilter" class="filter-date" onchange="loadAdminSlots()">
+          <button class="btn-action btn-book" style="padding:8px 16px" onclick="loadAdminSlots()">Filter</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Service</th><th>Date</th><th>Time</th><th>Capacity</th><th>Booked</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="adminSlotsBody">
+            <tr><td colspan="7" class="loading-text">Loading slots...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Appointments Tab -->
+  <div class="tab-content" id="tab-appointments" style="display:none">
+    <div class="admin-section">
+      <div class="card-header">
+        <h3>Manage Booked Appointments</h3>
+        <span class="badge user" id="appointmentCount">0 total</span>
+      </div>
+      <div class="card-body">
+          <div class="filter-bar">
+            <select id="apptStatusFilter" class="filter-select" onchange="loadAdminAppointments()">
+            <option value="">All Status</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="no_show">No-show</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <input type="date" id="apptDateFilter" class="filter-date" onchange="loadAdminAppointments()">
+          <input type="search" id="apptSearchFilter" class="filter-search" placeholder="Search client, passport, or service" oninput="debounceAdminAppointments()">
+          <button class="btn-action btn-book" style="padding:8px 16px" onclick="loadAdminAppointments()">Filter</button>
+          <button class="btn-action btn-cancel" style="padding:8px 16px" onclick="clearAdminAppointmentFilters()">Clear filters</button>
+        </div>
+        <div class="admin-info-note">
+          <strong>Booking management:</strong>Review client bookings and record the outcome. Use Cancel booking only when the appointment must be released.
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>ID</th><th>Client</th><th>Passport / DOB</th><th>Email</th><th>Service</th><th>Date</th><th>Time</th><th>Status</th><th>Manage Booking</th></tr>
+          </thead>
+          <tbody id="adminAppointmentsBody">
+            <tr><td colspan="9" class="loading-text">Loading appointments...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Users Tab -->
+  <div class="tab-content" id="tab-users" style="display:none">
+    <div class="admin-section">
+      <div class="card-header">
+        <h3>Manage Users</h3>
+        <span class="badge user" id="userCount">0 total</span>
+      </div>
+      <div class="card-body">
+        <div class="filter-bar">
+          <select id="userRoleFilter" class="filter-select" onchange="loadAdminUsers()">
+            <option value="">All Roles</option>
+            <option value="user">Users</option>
+            <option value="admin">Admins</option>
+          </select>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="adminUsersBody">
+            <tr><td colspan="6" class="loading-text">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Auto-Book Tab -->
+  <div class="tab-content" id="tab-autobook" style="display:none">
+    <div class="admin-section">
+      <div class="card-header"><h3>Auto-Book Monitor</h3></div>
+      <div class="card-body">
+        <div class="monitor-status" style="margin-bottom:20px">
+          <div class="status-indicator" id="monitorDot"></div>
+          <span id="autobookMonitorStatus">Checking monitor status...</span>
+          <small style="color:#666">(checks every 1 second)</small>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>User</th><th>Email</th><th>Auto-Book</th><th>Preferred Services</th><th>Preferred Times</th></tr>
+          </thead>
+          <tbody id="autobookUsersBody">
+            <tr><td colspan="5" class="loading-text">Loading settings...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Add/Edit Slot Modal -->
+  <div class="modal-overlay" id="addSlotModal" style="display:none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="addSlotTitle">Add New Time Slot</h3>
+        <button class="modal-close" onclick="closeAddSlotModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="addSlotForm">
+          <input type="hidden" id="editSlotId">
+          <div class="form-group">
+            <label>Service Name *</label>
+            <input type="text" id="newSlotService" placeholder="e.g. Business Consultation" required list="serviceList">
+            <datalist id="serviceList">
+              <option value="Business Consultation">
+              <option value="Visa Processing Help">
+              <option value="Immigration Advisory">
+              <option value="Document Verification">
+              <option value="Passport Services">
+            </datalist>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" id="newSlotDesc" placeholder="Brief description (optional)">
+          </div>
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" id="newSlotDate" required>
+          </div>
+          <div class="form-group">
+            <label>Start Time *</label>
+            <input type="time" id="newSlotStart" required>
+          </div>
+          <div class="form-group">
+            <label>End Time *</label>
+            <input type="time" id="newSlotEnd" required>
+          </div>
+          <div class="form-group">
+            <label>Capacity (people)</label>
+            <input type="number" id="newSlotCap" min="1" max="20" value="1" required>
+          </div>
+          <div id="addSlotError" class="error-message" style="display:none"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAddSlotModal()">Cancel</button>
+        <button class="btn btn-primary" style="width:auto" onclick="submitAddSlot()">Save Slot</button>
+      </div>
+    </div>
+  </div>
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal" style="display:none">
+    <div class="modal-content" style="max-width:380px;text-align:center">
+      <div class="modal-body">
+        <div style="font-size:48px"></div>
+        <h3 id="successTitle" style="margin:10px 0;color:#1a1a2e">Success!</h3>
+        <p id="successMsg" style="color:#666"></p>
+      </div>
+      <div class="modal-footer" style="justify-content:center">
+        <button class="btn btn-primary" style="width:auto" onclick="closeSuccessModal()">OK</button>
+      </div>
+    </div>
+  </div>
+  <script src="/js/auth.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

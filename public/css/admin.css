@@ -1,0 +1,360 @@
+.admin-body {
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.admin-nav {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    padding: 15px 30px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.admin-nav .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon-small {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.brand-name {
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.admin-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.admin-stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.stat-icon.users { color: #667eea; }
+.stat-icon.slots { color: #28a745; }
+.stat-icon.available { color: #17a2b8; }
+.stat-icon.booked { color: #ffc107; }
+.stat-icon.today { color: #fd7e14; }
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.admin-tab-container {
+    margin-bottom: 20px;
+}
+
+.admin-tab {
+    background: white;
+    border: none;
+    padding: 12px 24px;
+    margin-right: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #555;
+    transition: all 0.2s;
+}
+
+.admin-tab:hover {
+    background: #f8f9fa;
+    color: #333;
+}
+
+.admin-tab.active {
+    background: #667eea;
+    color: white;
+}
+
+.admin-body .tab-content {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.admin-section .card-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-section .card-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.admin-section .card-body {
+    padding: 20px;
+}
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: #f8f9fa;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.data-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+    color: #555;
+}
+
+.data-table tr:hover {
+    background: #f8f9fa;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.badge.available {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge.booked {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge.confirmed {
+    background: #d4edda;
+    color: #155724;
+}
+
+
+.badge.completed {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge.no_show {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.admin-info-note {
+    margin-top: 15px;
+    padding: 10px 12px;
+    border-left: 3px solid #667eea;
+    background: #f5f6ff;
+    color: #555;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.booking-actions {
+    min-width: 245px;
+}
+
+.booking-actions .btn-action {
+    margin-bottom: 5px;
+}
+
+.badge.user {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.badge.admin {
+    background: #ffcccc;
+    color: #721c24;
+}
+
+.btn-action {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.btn-edit {
+    background: #ffc107;
+    color: #333;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-book {
+    background: #667eea;
+    color: white;
+}
+
+.loading-text {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 10px;
+}
+
+.modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 15px 20px;
+}
+
+.modal-header .modal-title {
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.overview-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.overview-card h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+}
+
+@media (max-width: 768px) {
+  .admin-body { padding: 12px; }
+  .admin-nav { padding: 12px 16px; }
+  .brand-name { font-size: 1rem; }
+  .admin-tab { padding: 10px 12px; }
+  .filter-search { min-width: 100%; width: 100%; }
+  .admin-section .card-body { overflow-x: auto; }
+  .data-table { min-width: 900px; }
+}
+
+.badge.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+

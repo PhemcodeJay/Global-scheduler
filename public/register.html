@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create an Account | Gonest International</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+  <!-- Top accent bar -->
+  <div class="auth-topbar"></div>
+
+  <!-- Site header -->
+  <header class="auth-header">
+    <div class="auth-header-inner">
+      <a class="auth-brand" href="/">
+        <span class="auth-brand-mark">🌐</span>
+        <span class="auth-brand-info">
+          <span class="auth-brand-name">Gonest International</span>
+          <span class="auth-brand-tagline">Your Gateway to Global Services</span>
+        </span>
+      </a>
+      <div class="auth-lang">
+        <select id="langSelect" class="auth-lang-select" aria-label="Select language">
+          <option value="en" selected>English</option>
+          <option value="ar">العربية</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="tr">Türkçe</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main: centred registration card -->
+  <main class="auth-main">
+    <div class="auth-card">
+      <div class="auth-form">
+        <div class="form-header">
+          <h2>Create an account</h2>
+          <p>Register to start booking your appointments online</p>
+        </div>
+        
+        <form id="registerForm">
+          <div class="form-group">
+            <label class="form-label" for="name">Full Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Enter your full name" autocomplete="name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email address" autocomplete="email" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Create a password (min 8 chars)" autocomplete="new-password" required minlength="8">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="confirmPassword">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" autocomplete="new-password" required>
+          </div>
+          
+          <div id="error" class="error-message d-none"></div>
+          
+          <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        </form>
+        
+        <div class="form-footer">
+          <p>Already have an account? <a href="/" class="switch-link">Sign in</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demo credentials (demo environments only) -->
+    <div class="auth-demo">
+      <span class="auth-demo-title">🔑 Demo credentials</span>
+      <span><strong>Admin</strong> configured deployment account</span>
+      <span><strong>User</strong> john@example.com / user123</span>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="auth-footer">
+    <nav class="auth-footer-links">
+      <a href="#">FAQ</a>
+      <a href="#">Contact Us</a>
+      <a href="#">Terms &amp; Conditions</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Disclaimer</a>
+    </nav>
+    <p class="auth-footer-copy">Copyright © 2026 Gonest International. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('error');
+      errorEl.classList.add('d-none');
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        errorEl.textContent = 'Passwords do not match';
+        errorEl.classList.remove('d-none');
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        
+        const data = await res.json();
+        
+        if (data.errors) {
+          errorEl.textContent = data.errors.map(e => e.msg).join(', ');
+          errorEl.classList.remove('d-none');
+        } else if (data.error) {
+          errorEl.textContent = data.error;
+          errorEl.classList.remove('d-none');
+        } else {
+          localStorage.setItem('gonest_token', data.token);
+          localStorage.setItem('gonest_user', JSON.stringify(data.user));
+          window.location.href = '/dashboard.html';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Network error. Please try again.';
+        errorEl.classList.remove('d-none');
+      }
+    });
+  </script>
+</body>
+</html>
