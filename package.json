@@ -5,9 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "test": "node test-db.js",
-    "test:integration": "node test-speed.js"
+    "dev": "node server.js"
   },
   "engines": {
     "node": ">=22.5.0"

@@ -128,19 +128,31 @@ Change the interval with `AUTO_BOOK_INTERVAL_MS`. Values below 50ms are clamped 
 
 ## Tests
 
-Run the database test:
+Test scripts (test-db.js, test-speed.js) were removed from the repository to keep the production bundle clean. If you need to re-add them, recreate them under a tests/ folder and wire them into CI rather than committing them to the app root.
 
-```bash
-npm test
-```
+## Production deployment
 
-With the server running, run the auto-book integration test:
+1. Copy .env.example to .env on the server and fill in real values:
+   - NODE_ENV=production
+   - A long random JWT_SECRET (node -e "console.log(require('crypto').randomBytes(48).toString('base64'))")
+   - A strong ADMIN_PASSWORD (never admin123)
+   - CORS_ORIGIN set to your frontend domain(s)
+   - TRUST_PROXY=true if behind nginx/Cloudflare
+   - SEED_DEMO_DATA=false (demo users must not be seeded in production)
 
-```bash
-npm run test:integration
-```
+2. Install dependencies: npm install --omit=dev
 
-The integration test requires the server to be available at `http://localhost:3000`.
+3. Run with a process manager (recommended PM2):
+   ```bash
+   npm install -g pm2
+   pm2 start server.js --name gonest-scheduler
+   pm2 save
+   ```
+
+4. Put the app behind HTTPS + a reverse proxy (nginx/Cloudflare) and enable TRUST_PROXY=true.
+5. Back up gonest.db regularly (SQLite file). The app recreates the schema on startup but existing data lives in the DB file.
+6. Run as a restricted OS user, not root/administrator.
+7. .env, node_modules/, gonest.db*, and *.log are gitignored — never commit them.
 
 ## API overview
 

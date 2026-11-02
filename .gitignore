@@ -1,4 +1,16 @@
 .env
 node_modules/
-gonest.db
+
+# SQLite database (dev/local; regenerated on startup)
+gonest.db*
+
+# Logs
 *.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PM2 / process logs
+logs/*.log

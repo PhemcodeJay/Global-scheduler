@@ -17,6 +17,10 @@ if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 32) {
 }
 
 const app = express();
+// Trust reverse proxy (nginx/Cloudflare) so req.ip/rate limiting work correctly.
+// Set TRUST_PROXY=true in .env when deployed behind a proxy.
+if (process.env.TRUST_PROXY === "true") app.set("trust proxy", "loopback");
+
 const port = Number(process.env.PORT) || 3000;
 const corsOrigins = (process.env.CORS_ORIGIN || '')
   .split(',')
@@ -74,6 +78,10 @@ const server = app.listen(port, () => {
   console.log(`Auto-book monitor: ${autoBookService.getStatus().monitoring ? 'ACTIVE' : 'DISABLED'} (${autoBookService.getStatus().interval}ms)`);
   console.log('='.repeat(50));
 });
+
+// Production socket hardening
+server.keepAliveTimeout = 5 * 1000;
+server.headersTimeout = 5 * 1000;
 
 function shutdown(signal) {
   console.log(`Received ${signal}, shutting down gracefully...`);
